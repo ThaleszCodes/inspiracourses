@@ -1,4 +1,3 @@
-
 export interface Category {
   id: string;
   name: string;
@@ -9,6 +8,7 @@ export interface Course {
   name: string;
   description: string;
   price: number;
+  originalPrice?: number;
   imageUrl: string;
   categoryId: string;
   checkoutUrl: string;
