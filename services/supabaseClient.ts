@@ -1,4 +1,3 @@
-// FIX: Moved triple-slash directive to the top of the file to ensure Vite client types are loaded correctly.
 /// <reference types="vite/client" />
 
 import { createClient } from '@supabase/supabase-js';
@@ -22,6 +21,7 @@ type CourseRow = {
   name: string;
   description: string;
   price: number;
+  original_price: number | null;
   image_url: string;
   category_id: number;
   checkout_url: string;
@@ -56,6 +56,13 @@ interface Database {
         Insert: CategoryInsert;
         Update: CategoryUpdate;
       };
+    };
+    // FIX: Add empty Views and Functions for stricter type safety with Supabase generics.
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
     };
   };
 }
