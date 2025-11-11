@@ -68,7 +68,12 @@ const AdminDashboard: React.FC = () => {
   
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
-      setFormData(prev => ({ ...prev, [name]: name === 'price' ? parseFloat(value) : value }));
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: (name === 'price' || name === 'originalPrice') 
+            ? (value === '' ? undefined : parseFloat(value)) 
+            : value 
+    }));
   }
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -132,10 +137,16 @@ const AdminDashboard: React.FC = () => {
                     <label htmlFor="course-description" className={labelClasses}>Descrição</label>
                     <textarea id="course-description" name="description" value={formData.description || ''} onChange={handleFormChange} className={inputClasses} required />
                 </div>
-                <div>
-                    <label htmlFor="course-price" className={labelClasses}>Preço</label>
-                    <input id="course-price" type="number" step="0.01" name="price" placeholder="Ex: 99.90" value={formData.price || ''} onChange={handleFormChange} className={inputClasses} required />
-                </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label htmlFor="course-originalPrice" className={labelClasses}>Preço Original (De:)</label>
+                        <input id="course-originalPrice" type="number" step="0.01" name="originalPrice" placeholder="Opcional. Ex: 299.90" value={formData.originalPrice || ''} onChange={handleFormChange} className={inputClasses} />
+                    </div>
+                    <div>
+                        <label htmlFor="course-price" className={labelClasses}>Preço Atual (Por:)</label>
+                        <input id="course-price" type="number" step="0.01" name="price" placeholder="Ex: 99.90" value={formData.price || ''} onChange={handleFormChange} className={inputClasses} required />
+                    </div>
+                 </div>
                 <div>
                     <label htmlFor="course-imageUrl" className={labelClasses}>URL da Imagem</label>
                     <input id="course-imageUrl" type="text" name="imageUrl" value={formData.imageUrl || ''} onChange={handleFormChange} className={inputClasses} required />
