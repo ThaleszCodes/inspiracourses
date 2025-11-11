@@ -1,14 +1,17 @@
+// Fix for line 6, 7: Add triple-slash directive to include Vite client types for `import.meta.env`.
+/// <reference types="vite/client" />
+
 import { createClient } from '@supabase/supabase-js';
 
 // !! IMPORTANTE !!
-// Substitua com a URL e a Chave Anônima (Anon Key) do seu projeto Supabase.
-// Você pode encontrar essas informações nas configurações de API do seu projeto.
-// FIX: Add explicit string types to widen the types from literals and allow comparison.
-const supabaseUrl: string = 'https://gkatfhjbmattmrlkdqsz.supabase.co';
-const supabaseAnonKey: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrYXRmaGpibWF0dG1ybGtkcXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4MjA5NDUsImV4cCI6MjA3ODM5Njk0NX0.mVuwHgPdjZbc6tpqLPt9It15PaiLv82IkzxNnKyiS08';
+// As variáveis de ambiente VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY
+// devem ser configuradas no painel do seu provedor de hospedagem (ex: Vercel).
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-if (supabaseUrl === 'https://SEU_PROJETO_URL.supabase.co' || supabaseAnonKey === 'SUA_CHAVE_ANON') {
-    console.warn("Supabase client is not configured. Please add your project URL and anon key in services/supabaseClient.ts");
+if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("Supabase client is not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment variables.");
+    // In a real app, you might want to throw an error here or render an error state.
 }
 
 type CourseRow = {
