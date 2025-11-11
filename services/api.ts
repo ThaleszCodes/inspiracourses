@@ -109,20 +109,40 @@ export const addCourse = async (courseData: Omit<Course, 'id'>): Promise<Course>
   const supabaseData = courseToSupabase(courseData);
   const { data, error } = await supabase.from('courses').insert(supabaseData).select().single();
   if (error) throw new Error(error.message);
-  // FIX: Add null check before spreading data to fix "Spread types may only be created from object types" error.
   if (!data) {
     throw new Error('Course creation failed: no data returned.');
   }
-  return courseFromSupabase({ ...data, categories: {} }); // Category won't be joined on insert
+  // FIX: Manually map the result. courseFromSupabase expects a joined category, which is not available on insert.
+  // This also fixes the "Spread types may only be created from object types" error by avoiding the spread on `data`.
+  return {
+    id: data.id.toString(),
+    name: data.name,
+    description: data.description,
+    price: data.price,
+    imageUrl: data.image_url,
+    categoryId: data.category_id.toString(),
+    checkoutUrl: data.checkout_url,
+    benefits: data.benefits,
+  };
 };
 
 export const updateCourse = async (id: string, courseData: Omit<Course, 'id'>): Promise<Course | null> => {
   const supabaseData = courseToSupabase(courseData);
   const { data, error } = await supabase.from('courses').update(supabaseData).eq('id', Number(id)).select().single();
   if (error) throw new Error(error.message);
-  // FIX: Add null check before spreading data to fix "Spread types may only be created from object types" error.
   if (!data) return null;
-  return courseFromSupabase({ ...data, categories: {} }); // Category won't be joined on update
+  // FIX: Manually map the result. courseFromSupabase expects a joined category, which is not available on update.
+  // This also fixes the "Spread types may only be created from object types" error by avoiding the spread on `data`.
+  return {
+    id: data.id.toString(),
+    name: data.name,
+    description: data.description,
+    price: data.price,
+    imageUrl: data.image_url,
+    categoryId: data.category_id.toString(),
+    checkoutUrl: data.checkout_url,
+    benefits: data.benefits,
+  };
 };
 
 export const deleteCourse = async (id: string): Promise<void> => {
