@@ -46,6 +46,13 @@ const CourseDetailPage: React.FC = () => {
     return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
+  const calculateDiscount = (original: number, current: number) => {
+    if (!original || original <= current) return 0;
+    return Math.round(((original - current) / original) * 100);
+  };
+
+  const discount = course.originalPrice ? calculateDiscount(course.originalPrice, course.price) : 0;
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-xl overflow-hidden">
@@ -79,7 +86,21 @@ const CourseDetailPage: React.FC = () => {
           </div>
           
           <div className="mt-10 text-center">
-            <p className="text-3xl font-bold text-inspira-dark mb-4">{formatPrice(course.price)}</p>
+            {course.originalPrice && course.originalPrice > course.price ? (
+                <div className="mb-4">
+                    <p className="text-2xl text-gray-500 line-through">{formatPrice(course.originalPrice)}</p>
+                    <p className="text-4xl font-extrabold text-inspira-dark flex items-center justify-center gap-4">
+                        {formatPrice(course.price)}
+                        {discount > 0 && (
+                            <span className="bg-red-500 text-white text-lg font-bold px-4 py-1 rounded-full animate-pulse">
+                                {discount}% OFF
+                            </span>
+                        )}
+                    </p>
+                </div>
+            ) : (
+                <p className="text-3xl font-bold text-inspira-dark mb-4">{formatPrice(course.price)}</p>
+            )}
             <a 
               href={course.checkoutUrl} 
               target="_blank" 
