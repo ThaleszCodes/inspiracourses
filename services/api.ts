@@ -2,18 +2,23 @@ import { Course, Category, CourseWithCategory } from '../types';
 import { supabase } from './supabaseClient';
 
 // --- Mappers para converter snake_case (DB) para camelCase (JS) e vice-versa ---
-const courseFromSupabase = (dbCourse: any): CourseWithCategory => ({
-    id: dbCourse.id.toString(),
-    name: dbCourse.name,
-    description: dbCourse.description,
-    price: dbCourse.price,
-    originalPrice: dbCourse.original_price,
-    imageUrl: dbCourse.image_url,
-    categoryId: dbCourse.category_id.toString(),
-    checkoutUrl: dbCourse.checkout_url,
-    benefits: dbCourse.benefits,
-    category: categoryFromSupabase(dbCourse.categories)
-});
+const courseFromSupabase = (dbCourse: any): CourseWithCategory => {
+    // Fallback de segurança caso a categoria venha nula (ex: erro de integridade ou join falhou)
+    const categoryData = dbCourse.categories ? categoryFromSupabase(dbCourse.categories) : { id: '0', name: 'Sem Categoria' };
+    
+    return {
+        id: dbCourse.id.toString(),
+        name: dbCourse.name,
+        description: dbCourse.description,
+        price: dbCourse.price,
+        originalPrice: dbCourse.original_price,
+        imageUrl: dbCourse.image_url,
+        categoryId: dbCourse.category_id.toString(),
+        checkoutUrl: dbCourse.checkout_url,
+        benefits: dbCourse.benefits,
+        category: categoryData
+    };
+};
 
 // FIX: Change parameter type from Partial<Course> to Omit<Course, 'id'> to ensure type safety.
 const courseToSupabase = (appCourse: Omit<Course, 'id'>) => ({
@@ -116,7 +121,8 @@ export const addCourse = async (courseData: Omit<Course, 'id'>): Promise<Course>
     throw new Error('Course creation failed: no data returned.');
   }
   // FIX: Manually map the result. courseFromSupabase expects a joined category, which is not available on insert.
-  // This also fixes the "Spread types may only be created from object types" error by avoiding the spread on `data`.
+  // We return a mock category object for the UI to update optimistically without refetching immediately if needed.
+  // Realistically the user will reload or we'll fetch fresh data.
   return {
     id: data.id.toString(),
     name: data.name,
@@ -135,8 +141,7 @@ export const updateCourse = async (id: string, courseData: Omit<Course, 'id'>): 
   const { data, error } = await supabase.from('courses').update(supabaseData).eq('id', Number(id)).select().single();
   if (error) throw new Error(error.message);
   if (!data) return null;
-  // FIX: Manually map the result. courseFromSupabase expects a joined category, which is not available on update.
-  // This also fixes the "Spread types may only be created from object types" error by avoiding the spread on `data`.
+  
   return {
     id: data.id.toString(),
     name: data.name,
@@ -153,4 +158,4 @@ export const updateCourse = async (id: string, courseData: Omit<Course, 'id'>): 
 export const deleteCourse = async (id: string): Promise<void> => {
   const { error } = await supabase.from('courses').delete().eq('id', Number(id));
   if (error) throw new Error(error.message);
-};
+}
