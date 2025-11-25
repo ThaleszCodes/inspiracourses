@@ -6,8 +6,8 @@ import { createClient } from '@supabase/supabase-js';
 // O código abaixo usa variáveis de ambiente (VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY)
 // para o deploy em produção (ex: Vercel). Para que o app funcione em desenvolvimento,
 // adicionamos as chaves diretamente como "fallback".
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://gzprziycnrcdgffxpltx.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cHJ6aXljbnJjZGdmZnhwbHR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMDk2NjcsImV4cCI6MjA3OTU4NTY2N30.P7tyullatXba8Ty5MZCgfLOwUsfbprI0-_BWT3yyo24';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://gkatfhjbmattmrlkdqsz.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrYXRmaGpibWF0dG1ybGtkcXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4MjA5NDUsImV4cCI6MjA3ODM5Njk0NX0.mVuwHgPdjZbc6tpqLPt9It15PaiLv82IkzxNnKyiS08';
 
 
 if (!supabaseUrl || !supabaseAnonKey) {
